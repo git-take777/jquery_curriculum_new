@@ -1,4 +1,4 @@
-<!doctype html>
+<!Doctype html>
 <html>
   <head>
     <meta charset="UTF-8">
@@ -22,11 +22,22 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       // 今回やるのはモーダルです。
-      // .modal-show をクリックすることで .modal をfadeInさせる。
-      // .modal-close をクリックで .modal をfadeOutさせる。
+      const fadeTime = 1500;
+      $(function() {
+        $(".modal-show").click(function() {
+        // .modal-show をクリックすることで .modal をfadeInさせる。
+        $(".modal").fadeIn(fadeTime);
+          return false;
+        });
+        // .modal-close をクリックで .modal をfadeOutさせる。
+        $('.modal-close').on ('click', function() {
+          $(".modal").fadeOut(fadeTime);
+            return false;
+        });
       // .click() クリック時のイベントを登録する。
       // .fadeIn() 一定時間かけてフェードインする。
       // .fadeOut() 一定時間かけてフェードアウトする。
+      });
     </script>
   </body>
 </html>
