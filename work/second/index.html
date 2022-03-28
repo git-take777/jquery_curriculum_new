@@ -24,12 +24,10 @@
       const fadeTime = 1500;
       $(function() {
         $(".modal-show").click(function() {
-        $(".modal").fadeIn(fadeTime);
-          return false;
+          $(".modal").fadeIn(fadeTime);
         });
-        $('.modal-close').on ('click', function() {
+        $('.modal').click(function() {
           $(".modal").fadeOut(fadeTime);
-            return false;
         });
       });
       // 今回やるのはモーダルです。

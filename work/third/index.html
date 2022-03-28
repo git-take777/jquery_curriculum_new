@@ -24,11 +24,10 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
-      var tabs = $('.nav li')
-      $('.nav li').click( function() {
-        $('.is-hidden').addClass("is-hidden");
-        $(this).removeClass("is-hidden");
-        var index = tabs.index (this);
+      // var tabs = $('.nav li')
+      $('.nav').children().click( function() {
+        var index =$(this).index();
+        //tabs.index要らない。
         $('.contents li').addClass('is-hidden').eq(index).removeClass('is-hidden');
       });
        // 今回やるのはタブメニューです。メソッドチェーン。
