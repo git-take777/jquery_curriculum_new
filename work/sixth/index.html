@@ -42,33 +42,46 @@
       // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
       // 以下は今回使う$.ajaxの基本的な形です。
       //
-      // $.ajax({
-      //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-      //   type: 'GET',
-      //   datatype: 'json',
-      //   data: {
-      //     // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-      //     applicationId: appId, (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
-      //     booksGenreId: '001'
-      //   },
-      // }).done(function(data) {
-      //   // この中にデータ取得後の動きを記述していきます。
-      //   console.log(data);
-      // });
-      //
+      $('[data-js="search-btn"]').on('click',function(){
+        $.ajax({
+          url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+          type: 'GET',
+          datatype: 'json',
+          data: {
+            // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+            applicationId: appId, 
+            // (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
+            booksGenreId: '001',
+            hits: 30,
+          },
+        }).done(function(data) {
+          // この中にデータ取得後の動きを記述していきます。
+          console.log(data);
+          // var Items = [];
+          $('.lists').each(Items,function ajax(index, element){
+            var itemImg= data.Items[index].Item.largeImageUrl;
+            var itemName= data.Items[index].Item.author;
+            var itemTitle= data.Items[index].Item.title;
+            var itemPublish = data.Items[index].Item.publisherName;
+            var itemParent= 
+                        '<li class="lists__item">' +
+                          '<div class="lists__item__inner">' +
+                            '<a href="" class="lists__item__link" target="_blank">' +
+                              '<img src=" ' + itemImg + ' " class="lists__item__img" alt="">' +
+                              '<p class="lists__item__detail">作品名： ' + itemTitle +' </p>' +
+                              '<p class="lists__item__detail">作者:'+ itemName + ' </p>' +
+                              '<p class="lists__item__detail">出版社：'+ itemPublish + '</p>' +
+                            '</a>' +
+                          '</div>' +
+                        '</li>';
+            $('.lists').append(itemParent);
+          });
+          });
+      });
       //
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
-      // <li class="lists__item">
-      //  <div class="lists__item__inner">
-      //    <a href="" class="lists__item__link" target="_blank">
-      //      <img src="" class="lists__item__img" alt="">
-      //      <p class="lists__item__detail">作品名：</p>
-      //      <p class="lists__item__detail">作者　：</p>
-      //      <p class="lists__item__detail">出版社：</p>
-      //    </a>
-      //  </div>
-      // </li>
+     
       //
       // 取得できた書籍の件数をもとに、ページャを作成しましょう
       // ページャの条件
