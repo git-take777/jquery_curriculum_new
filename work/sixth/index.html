@@ -44,16 +44,16 @@
       //
       //初期値を先に設定させる。R:
       $(function(){
-        var pager =
-                      '<div class="pager" data-js="pager">' +
-                        '<div class="counter">' +
-                          '<span class="counter-current"></span>/<span class="counter-all"></span>' +
-                        '</div>' +
-                        '<div class="btn-wrapper">' +
-                          '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
-                          '<a class="btn-item" data-js="page-next" href="">次へ</a> '
-                        '</div>' +
-                      '</div>' ;
+          var pager =
+                        '<div class="pager" data-js="pager">' +
+                          '<div class="counter">' +
+                            '<span class="counter-current"></span>/<span class="counter-all"></span>' +
+                          '</div>' +
+                          '<div class="btn-wrapper">' +
+                            '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
+                            '<a class="btn-item" data-js="page-next" href="">次へ</a> '
+                          '</div>' +
+                        '</div>' ;
         var keyword = "";
         var count = 20;
         var FirstPage =1;
@@ -62,7 +62,6 @@
         $('[data-js="search-btn"]').on('click',function(){
           keyword = $('.search__text__input').val();
           CurrentPage = FirstPage;
-          //リロード時に、FirstPageに戻したい。
           $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
             type: 'GET',
@@ -78,8 +77,7 @@
           },
         }).done(function(data) {
           // この中にデータ取得後の動きを記述していきます。
-        
-          $.each(data.Items, function ajax(index, element){
+          $.each(data.Items, function(index, element){
             // console.log(element);
             var itemImg= data.Items[index].Item.largeImageUrl;
             var itemName= data.Items[index].Item.author;
@@ -102,12 +100,11 @@
             $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
               return ;
           }else {
-            $('.wrap').after(pager);
+            $('.lists').after(pager);
           } 
             });
           });
       });
-
       //
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
