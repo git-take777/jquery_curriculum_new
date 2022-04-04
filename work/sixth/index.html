@@ -33,8 +33,6 @@
       //
       // 下記URLにAPIの仕様が載っているので、ブラウザで開いて参考にしてください。
       // https://webservice.rakuten.co.jp/documentation/books-total-search
-      //
-      //
       // [使うメソッド]
       // e.preventDefault イベントをキャンセルするためのメソッド。今回はaタグの遷移を無効化します。
       // on('click') onメソッドを使うことで、動的に出力される要素に対してもイベント登録が行えます。
@@ -44,7 +42,7 @@
       //
       //初期値を先に設定させる。R:
       $(function(){
-          var pager =
+        var pager =
                         '<div class="pager" data-js="pager">' +
                           '<div class="counter">' +
                             '<span class="counter-current"></span>/<span class="counter-all"></span>' +
@@ -55,14 +53,50 @@
                           '</div>' +
                         '</div>' ;
         var keyword = "";
-        var count = 20;
+        var hitCount = 20;
         var FirstPage =1;
         var CurrentPage =1;
+        var pageCount = 100;
         var errorMessage = "";
-        $('[data-js="search-btn"]').on('click',function(){
+
+        function clearMethod () {
+          $('.lists').empty();
+          $(pager).remove();
+        };
+
+        function nextReset() {
+          $(document).on('click', '[data-js="page-next"]', function(e) {
+            e.preventDefault();
+            clearMethod ();
+            if( $(this).hasClass('disabled') ) {
+              return ;
+            };
+            CurrentPage ++ ;
+            showData();
+          });  
+        };
+
+        function prevReset() {
+          $(document).on('click', '[data-js="page-prev"]', function(e) {
+            e.preventDefault();
+            clearMethod ();
+            if( $(this).hasClass('disabled') ) {
+                return ;
+            };
+              CurrentPage -- ;
+              showData();
+          });
+        };   
+
+      $('[data-js="search-btn"]').on('click',function(){
+        clearMethod();
           keyword = $('.search__text__input').val();
           CurrentPage = FirstPage;
-          $.ajax({
+          showData();
+        });
+        function showData() {
+          clearMethod ();
+            $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
             type: 'GET',
             datatype: 'json',
@@ -71,14 +105,16 @@
               applicationId: appId, 
               // (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
               booksGenreId: '001',
-              hits: count,
+              hits: hitCount,
               keyword: keyword,
-              page: CurrentPage  
+              page: CurrentPage,  
+              pageCount: pageCount
           },
         }).done(function(data) {
           // この中にデータ取得後の動きを記述していきます。
+          // console.log(data);
+          function spa(){
           $.each(data.Items, function(index, element){
-            // console.log(element);
             var itemImg= data.Items[index].Item.largeImageUrl;
             var itemName= data.Items[index].Item.author;
             var itemTitle= data.Items[index].Item.title;
@@ -96,16 +132,36 @@
             '</li>';
             $('.lists').append(itemParent);
           });
-          if(data.count ===0) {
-            $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
-              return ;
-          }else {
-            $('.lists').after(pager);
-          } 
-            });
+        };
+
+        if(data.count ===0) {
+          $('[data-js="error-message"]').empty();
+          $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
+          return ;
+        }else {
+          clearMethod();
+          $('.lists').after(pager);
+          $('.counter').prepend(data.page).append(data.pageCount);
+          // prevReset();
+          // nextReset();
+          spa();
+            if (data.page === FirstPage) {
+              $('[data-js="page-prev"]').addClass("disabled");
+              nextReset();
+            }
+            if (data.page === pageCount) {
+              $('[data-js="page-next]').addClass("disabled");
+              prevReset();
+            }
+            // if(CurrentPage === FirstPage || data.hits <= hitCount ) {
+            //   $('[data-js="page-prev"], [data-js="page-next"]').addClass("disabled");
+            //   prevReset();
+            //   defaultMethod();
+            // }
+          }  
           });
+        }
       });
-      //
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
       //
@@ -120,3 +176,5 @@
     </script>
   </body>
 </html>
+
+<!--一件のみ検索word acdca -->
