@@ -132,14 +132,13 @@
         // この中にデータ取得後の動きを記述していきます。
         // console.log(data);
         if(data.count === 0) {
-          // clearMethod();
           $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
         }else {
           clearMethod();
+          showBookList(data);
           $('.lists').after(pager);
           $('.counter-current').append(data.page);
           $('.counter-all').prepend(data.pageCount);
-          showBookList(data);
           if (data.page === FIRSTPAGE) {
             $('[data-js="page-prev"]').addClass("disabled");
           }
