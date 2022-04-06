@@ -85,34 +85,6 @@
         $('.lists').append(itemParent);
       });
     };
-
-      $(document).on('click', '[data-js="page-next"]', function(e) {
-        e.preventDefault();
-        if( $(this).hasClass('disabled') ) {
-          return false;
-        };
-        clearMethod();
-        CurrentPage ++ ;
-        showData();
-      });  
-      
-      $(document).on('click', '[data-js="page-prev"]', function(e) {
-        e.preventDefault();
-        if( $(this).hasClass('disabled') ) {
-          return false;
-        };
-        clearMethod();
-        CurrentPage -- ;
-        showData(); 
-      });
-
-    $('[data-js="search-btn"]').on('click',function(){
-      clearMethod();
-      keyword = $('.search__text__input').val();
-      CurrentPage = FIRSTPAGE;
-      showData();
-    });
-      
     function showData() {
       $.ajax({
         url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
@@ -162,6 +134,34 @@
         }
       });
     }
+
+      $(document).on('click', '[data-js="page-next"]', function(e) {
+        e.preventDefault();
+        if( $(this).hasClass('disabled') ) {
+          return false;
+        };
+        clearMethod();
+        CurrentPage ++ ;
+        showData();
+      });  
+      
+      $(document).on('click', '[data-js="page-prev"]', function(e) {
+        e.preventDefault();
+        if( $(this).hasClass('disabled') ) {
+          return false;
+        };
+        clearMethod();
+        CurrentPage -- ;
+        showData(); 
+      });
+
+    $('[data-js="search-btn"]').on('click',function(){
+      clearMethod();
+      keyword = $('.search__text__input').val();
+      CurrentPage = FIRSTPAGE;
+      showData();
+    });
+      
   });
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
