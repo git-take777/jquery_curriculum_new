@@ -41,127 +41,131 @@
       // 以下は今回使う$.ajaxの基本的な形です。
       //
       //初期値を先に設定させる。R:
-      $(function(){
-        var pager =
-                        '<div class="pager" data-js="pager">' +
-                          '<div class="counter">' +
-                            '<span class="counter-current"></span>/<span class="counter-all"></span>' +
-                          '</div>' +
-                          '<div class="btn-wrapper">' +
-                            '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
-                            '<a class="btn-item" data-js="page-next" href="">次へ</a> '
-                          '</div>' +
-                        '</div>' ;
-        var keyword = "";
-        var hitCount = 20;
-        var FirstPage =1;
-        var CurrentPage =1;
-        var pageCount = 100;
-        var errorMessage = "";
+  $(function(){
+    var pager =
+                '<div class="pager" data-js="pager">' +
+                  '<div class="counter">' +
+                    '<span class="counter-current"></span>/<span class="counter-all"></span>' +
+                  '</div>' +
+                  '<div class="btn-wrapper">' +
+                    '<a class="btn-item" data-js="page-prev" href="">前へ</a>' +
+                    '<a class="btn-item" data-js="page-next" href="">次へ</a> '
+                  '</div>' +
+                '</div>' ;
+    var keyword = "";
+    var hitCount = 20;
+    var FirstPage =1;
+    var CurrentPage =1;
+    var pageCount = 100;
+    var errorMessage = "";
 
-        function clearMethod () {
-          $('.lists').empty();
-          $(pager).remove();
+    function clearMethod () {
+      $('.lists').empty();
+      $('.pager').remove();
+    }
+
+    function showBookList(data){
+      $.each(data.Items, function(index, element){
+        var itemImg= data.Items[index].Item.largeImageUrl;
+        var itemName= data.Items[index].Item.author;
+        var itemTitle= data.Items[index].Item.title;
+        var itemPublish = data.Items[index].Item.publisherName;
+        var itemParent = 
+        '<li class="lists__item">' +
+          '<div class="lists__item__inner">' +
+            '<a href="" class="lists__item__link" target="_blank">' +
+              '<img src=" ' + itemImg + ' " class="lists__item__img" alt="">' +
+              '<p class="lists__item__detail">作品名： ' + itemTitle +' </p>' +
+              '<p class="lists__item__detail">作者:'+ itemName + ' </p>' +
+              '<p class="lists__item__detail">出版社：'+ itemPublish + '</p>' +
+            '</a>' +
+          '</div>' +
+        '</li>';
+        $('.lists').append(itemParent);
+      });
+    };
+
+      $(document).on('click', '[data-js="page-next"]', function(e) {
+        e.preventDefault();
+        if( $(this).hasClass('disabled') ) {
+          return false;
         };
-
-        function nextReset() {
-          $(document).on('click', '[data-js="page-next"]', function(e) {
-            e.preventDefault();
-            clearMethod ();
-            if( $(this).hasClass('disabled') ) {
-              return ;
-            };
-            CurrentPage ++ ;
-            showData();
-          });  
+        CurrentPage ++ ;
+        showData();
+        clearMethod ();
+      });  
+      
+      $(document).on('click', '[data-js="page-prev"]', function(e) {
+        e.preventDefault();
+        if( $(this).hasClass('disabled') ) {
+          return false;
         };
+        CurrentPage -- ;
+        showData(); 
+        clearMethod ();
+      });
 
-        function prevReset() {
-          $(document).on('click', '[data-js="page-prev"]', function(e) {
-            e.preventDefault();
-            clearMethod ();
-            if( $(this).hasClass('disabled') ) {
-                return ;
-            };
-              CurrentPage -- ;
-              showData();
-          });
-        };   
-
-      $('[data-js="search-btn"]').on('click',function(){
-        clearMethod();
-          keyword = $('.search__text__input').val();
-          CurrentPage = FirstPage;
-          showData();
-        });
-        function showData() {
-          clearMethod ();
-            $.ajax({
-            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-            type: 'GET',
-            datatype: 'json',
-            data: {
-              // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-              applicationId: appId, 
-              // (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
-              booksGenreId: '001',
-              hits: hitCount,
-              keyword: keyword,
-              page: CurrentPage,  
-              pageCount: pageCount
-          },
-        }).done(function(data) {
-          // この中にデータ取得後の動きを記述していきます。
-          // console.log(data);
-          function spa(){
-          $.each(data.Items, function(index, element){
-            var itemImg= data.Items[index].Item.largeImageUrl;
-            var itemName= data.Items[index].Item.author;
-            var itemTitle= data.Items[index].Item.title;
-            var itemPublish = data.Items[index].Item.publisherName;
-            var itemParent = 
-            '<li class="lists__item">' +
-              '<div class="lists__item__inner">' +
-                '<a href="" class="lists__item__link" target="_blank">' +
-                  '<img src=" ' + itemImg + ' " class="lists__item__img" alt="">' +
-                  '<p class="lists__item__detail">作品名： ' + itemTitle +' </p>' +
-                  '<p class="lists__item__detail">作者:'+ itemName + ' </p>' +
-                  '<p class="lists__item__detail">出版社：'+ itemPublish + '</p>' +
-                '</a>' +
-              '</div>' +
-            '</li>';
-            $('.lists').append(itemParent);
-          });
-        };
-
+    $('[data-js="search-btn"]').on('click',function(){
+      clearMethod();
+      keyword = $('.search__text__input').val();
+      CurrentPage = FirstPage;
+      showData();
+    });
+      
+    function showData() {
+      $.ajax({
+        url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+        type: 'GET',
+        datatype: 'json',
+        data: {
+          // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+          applicationId: appId, 
+          // (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
+          booksGenreId: '001',
+          hits: hitCount,
+          keyword: keyword,
+          page: CurrentPage,  
+          pageCount: pageCount
+        },
+        //Ajaxとのやりとりを
+      }).done(function(data) {
+        // この中にデータ取得後の動きを記述していきます。
+        // console.log(data);
         if(data.count ===0) {
           $('[data-js="error-message"]').empty();
           $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
-          return ;
         }else {
           clearMethod();
           $('.lists').after(pager);
           $('.counter').prepend(data.page).append(data.pageCount);
-          // prevReset();
-          // nextReset();
-          spa();
-            if (data.page === FirstPage) {
-              $('[data-js="page-prev"]').addClass("disabled");
-              nextReset();
+          showBookList(data);
+          if( data.count <= hitCount ) {
+              $('[data-js="page-prev"], [data-js="page-next"]').addClass("disabled");
             }
-            if (data.page === pageCount) {
-              $('[data-js="page-next]').addClass("disabled");
-              prevReset();
-            }
-            // if(CurrentPage === FirstPage || data.hits <= hitCount ) {
-            //   $('[data-js="page-prev"], [data-js="page-next"]').addClass("disabled");
-            //   prevReset();
-            //   defaultMethod();
-            // }
-          }  
-          });
-        }
-      });
+          if (data.page === FirstPage) {
+            $('[data-js="page-prev"]').addClass("disabled");
+          }
+          if (data.page === pageCount) {
+            $('[data-js="page-next]').addClass("disabled");
+          }
+        }  
+      }).fail(function(error) {
+        // console.log(error.status);
+        $('[data-js="error-message"]').empty();
+          switch (error.status) {
+            case 400 : 
+            $('[data-js="error-message"]').append("検索文字が入力されていません。");
+            break;
+            case 429 :
+            $('[data-js="error-message"]').append("リクエスト過多です。しばらく時間を置いてからお試しください。");
+            break;
+            case 0 :
+            $('[data-js="error-message"]').append("通信に失敗しました。インターネットの接続をご確認ください。");
+            break;
+          }
+        });
+    }
+  });
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
       //
