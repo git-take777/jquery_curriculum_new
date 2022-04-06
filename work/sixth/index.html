@@ -56,8 +56,6 @@
     var HITCOUNT = 20;
     var FIRSTPAGE =1;
     var CurrentPage =1;
-    var pageCount = 100;
-    var errorMessage = "";
 
     function clearMethod () {
       $('.lists').empty();
@@ -66,11 +64,11 @@
     }
 
     function showBookList(data){
-      $.each(data.Items, function(index, element){
-        var itemImg= data.Items[index].Item.largeImageUrl;
-        var itemName= data.Items[index].Item.author;
-        var itemTitle= data.Items[index].Item.title;
-        var itemPublish = data.Items[index].Item.publisherName;
+      $.each(data.Items, function(index, book){
+        var itemImg= book.Item.largeImageUrl;
+        var itemName= book.Item.author;
+        var itemTitle= book.Item.title;
+        var itemPublish = book.Item.publisherName;
         var itemParent = 
         '<li class="lists__item">' +
           '<div class="lists__item__inner">' +
@@ -102,11 +100,10 @@
         //Ajaxとのやりとりを
       }).done(function(data) {
         // この中にデータ取得後の動きを記述していきます。
-        // console.log(data);
+        console.log(data);
         if(data.count === 0) {
           $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
         }else {
-          clearMethod();
           showBookList(data);
           $('.lists').after(pager);
           $('.counter-current').append(data.page);
@@ -114,13 +111,11 @@
           if (data.page === FIRSTPAGE) {
             $('[data-js="page-prev"]').addClass("disabled");
           }
-          if (data.page === pageCount) {
+          if (data.page === data.pageCount) {
             $('[data-js="page-next]').addClass("disabled");
           }
         }  
       }).fail(function(error) {
-        // console.log(error.status);
-        // clearMethod();
         switch (error.status) {
           case 0 :
           $('[data-js="error-message"]').append("通信に失敗しました。インターネットの接続をご確認ください。");
@@ -160,8 +155,7 @@
       keyword = $('.search__text__input').val();
       CurrentPage = FIRSTPAGE;
       showData();
-    });
-      
+    }); 
   });
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
       // 取得できたらHTMLに<ul class='lists'></ul>を用意しているので、下のテンプレに沿ってデータを入れ込みましょう。
