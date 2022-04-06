@@ -53,14 +53,15 @@
                   '</div>' +
                 '</div>' ;
     var keyword = "";
-    var hitCount = 20;
-    var FirstPage =1;
+    var HITCOUNT = 20;
+    var FIRSTPAGE =1;
     var CurrentPage =1;
     var pageCount = 100;
     var errorMessage = "";
 
     function clearMethod () {
       $('.lists').empty();
+      $('[data-js="error-message"]').empty();
       $('.pager').remove();
     }
 
@@ -90,9 +91,9 @@
         if( $(this).hasClass('disabled') ) {
           return false;
         };
+        clearMethod();
         CurrentPage ++ ;
         showData();
-        clearMethod ();
       });  
       
       $(document).on('click', '[data-js="page-prev"]', function(e) {
@@ -100,15 +101,15 @@
         if( $(this).hasClass('disabled') ) {
           return false;
         };
+        clearMethod();
         CurrentPage -- ;
         showData(); 
-        clearMethod ();
       });
 
     $('[data-js="search-btn"]').on('click',function(){
       clearMethod();
       keyword = $('.search__text__input').val();
-      CurrentPage = FirstPage;
+      CurrentPage = FIRSTPAGE;
       showData();
     });
       
@@ -122,27 +123,24 @@
           applicationId: appId, 
           // (今回はこの変数をIDとして使用します) ※メンターから別途渡されるファイルを読み込んでください。
           booksGenreId: '001',
-          hits: hitCount,
+          hits: HITCOUNT,
           keyword: keyword,
           page: CurrentPage,  
-          pageCount: pageCount
         },
         //Ajaxとのやりとりを
       }).done(function(data) {
         // この中にデータ取得後の動きを記述していきます。
         // console.log(data);
-        if(data.count ===0) {
-          $('[data-js="error-message"]').empty();
+        if(data.count === 0) {
+          // clearMethod();
           $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
         }else {
           clearMethod();
           $('.lists').after(pager);
-          $('.counter').prepend(data.page).append(data.pageCount);
+          $('.counter-current').append(data.page);
+          $('.counter-all').prepend(data.pageCount);
           showBookList(data);
-          if( data.count <= hitCount ) {
-              $('[data-js="page-prev"], [data-js="page-next"]').addClass("disabled");
-            }
-          if (data.page === FirstPage) {
+          if (data.page === FIRSTPAGE) {
             $('[data-js="page-prev"]').addClass("disabled");
           }
           if (data.page === pageCount) {
@@ -151,19 +149,19 @@
         }  
       }).fail(function(error) {
         // console.log(error.status);
-        $('[data-js="error-message"]').empty();
-          switch (error.status) {
-            case 400 : 
-            $('[data-js="error-message"]').append("検索文字が入力されていません。");
-            break;
-            case 429 :
-            $('[data-js="error-message"]').append("リクエスト過多です。しばらく時間を置いてからお試しください。");
-            break;
-            case 0 :
-            $('[data-js="error-message"]').append("通信に失敗しました。インターネットの接続をご確認ください。");
-            break;
-          }
-        });
+        // clearMethod();
+        switch (error.status) {
+          case 0 :
+          $('[data-js="error-message"]').append("通信に失敗しました。インターネットの接続をご確認ください。");
+          break;
+          case 400 : 
+          $('[data-js="error-message"]').append("検索文字が入力されていません。");
+          break;
+          case 429 :
+          $('[data-js="error-message"]').append("リクエスト過多です。しばらく時間を置いてからお試しください。");
+          break;
+        }
+      });
     }
   });
       // $.ajaxによってデータが取得できたら、必要なデータ(作品名とか作者名とか)を取得します。
