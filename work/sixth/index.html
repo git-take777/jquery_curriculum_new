@@ -58,11 +58,10 @@
     var CurrentPage =1;
 
     function clearMethod () {
-      $('.lists').empty();
+      $('[data-js="book-lists"]').empty();
       $('[data-js="error-message"]').empty();
       $('.pager').remove();
     }
-
     function showBookList(data){
       $.each(data.Items, function(index, book){
         var itemImg= book.Item.largeImageUrl;
@@ -80,7 +79,7 @@
             '</a>' +
           '</div>' +
         '</li>';
-        $('.lists').append(itemParent);
+        $('[data-js="book-lists"]').append(itemParent);
       });
     };
     function showData() {
@@ -100,19 +99,19 @@
         //Ajaxとのやりとりを
       }).done(function(data) {
         // この中にデータ取得後の動きを記述していきます。
-        console.log(data);
+        // console.log(data);
         if(data.count === 0) {
           $('[data-js="error-message"]').append("検索結果が見つかりませんでした。" , '<br>', "別のキーワードで検索して下さい。");
         }else {
           showBookList(data);
-          $('.lists').after(pager);
+          $('[data-js="book-lists"]').after(pager);
           $('.counter-current').append(data.page);
-          $('.counter-all').prepend(data.pageCount);
+          $('.counter-all').append(data.pageCount);
           if (data.page === FIRSTPAGE) {
-            $('[data-js="page-prev"]').addClass("disabled");
+            $('[data-js="page-prev"]').addClass('disabled');
           }
           if (data.page === data.pageCount) {
-            $('[data-js="page-next]').addClass("disabled");
+            $('[data-js="page-next"]').addClass('disabled');
           }
         }  
       }).fail(function(error) {
@@ -129,17 +128,17 @@
         }
       });
     }
-
+    //初めからは,html完成する。readyメソッド：読み込み時-load(html前),ready(html完成後)。
       $(document).on('click', '[data-js="page-next"]', function(e) {
         e.preventDefault();
-        if( $(this).hasClass('disabled') ) {
-          return false;
-        };
+        // if( $(this).hasClass('disabled') ) {
+        //   return false;
+        // };
         clearMethod();
         CurrentPage ++ ;
         showData();
       });  
-      
+      //
       $(document).on('click', '[data-js="page-prev"]', function(e) {
         e.preventDefault();
         if( $(this).hasClass('disabled') ) {
